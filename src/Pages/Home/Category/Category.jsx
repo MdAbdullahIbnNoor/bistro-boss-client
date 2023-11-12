@@ -9,16 +9,20 @@ import Slide_2 from '../../../assets/home/slide2.jpg';
 import Slide_3 from '../../../assets/home/slide3.jpg';
 import Slide_4 from '../../../assets/home/slide4.jpg';
 import Slide_5 from '../../../assets/home/slide5.jpg';
+import SectionTitle from '../../../components/SectionTitle/SectionTitle';
 
 
 const Category = () => {
+    const heading = "ORDER ONLINE"
+    const subHeading = "---From 11:00am to 10:00pm---";
     return (
         <div className='my-24'>
-            <h2 className='text-5xl text-gray-600 border-t-4 border-b-4 mb-10 py-3 text-center w-1/4 mx-auto'>ORDER ONLINE</h2>
+            <SectionTitle heading={heading} subHeading={subHeading}></SectionTitle>
             <Swiper
                 slidesPerView={4}
                 spaceBetween={30}
                 centeredSlides={true}
+                autoplay={true}
                 pagination={{
                     clickable: true,
                 }}
