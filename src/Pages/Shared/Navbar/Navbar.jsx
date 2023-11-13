@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import logo from '../../../assets/logo.png';
+import { NavLink } from 'react-router-dom';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,10 +13,10 @@ const Navbar = () => {
     <nav className="lg:fixed relative bg-opacity-30 bg-gray-800 shadow z-10 max-w-screen-2xl">
       <div className="px-6 py-6 mx-auto">
         <div className="lg:flex lg:items-center lg:justify-between">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between  lg:flex-grow ">
             <a href="/">
               <img
-                className="w-20 h-full sm:h-7 object-cover mr-[711px]"
+                className="w-20 h-full sm:h-7 object-cover lg:mr-[711px]"
                 src={logo}
                 alt=""
               />
@@ -72,31 +73,39 @@ const Navbar = () => {
                 : 'opacity-0 -translate-x-full'
             }`}
           >
-            <div className="flex flex-col -mx-6 lg:flex-row lg:items-center lg:mx-8">
-              <a
-                href="#"
+            <div className="flex flex-col -mx-6 lg:flex-row lg:items-center lg:mx-24 lg:w-3/5">
+              <NavLink
+                to="/"
                 className="px-3 py-2 mx-3 mt-2 text-lg text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
-                Join Slack
-              </a>
-              <a
-                href="#"
+                Home
+              </NavLink>
+              <NavLink
+                to="/menu"
                 className="px-3 py-2 mx-3 mt-2 text-lg text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
-                Browse Topics
-              </a>
-              <a
-                href="#"
+                Menu
+              </NavLink>
+              <NavLink
+                to="/order/salad"
                 className="px-3 py-2 mx-3 mt-2 text-lg text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
-                Random Item
-              </a>
-              <a
-                href="#"
+                Order
+              </NavLink>
+              <NavLink
+                to="menu"
                 className="px-3 py-2 mx-3 mt-2 text-lg text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
-                Experts
-              </a>
+                Menu
+              </NavLink>
+              <NavLink
+                to="menu"
+                className="px-3 py-2 mx-3 mt-2 text-lg text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                Menu
+              </NavLink>
+              
+             
             </div>
 
             <div className="flex items-center mt-4 lg:mt-0">
