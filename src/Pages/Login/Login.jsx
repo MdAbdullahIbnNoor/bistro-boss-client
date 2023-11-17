@@ -1,16 +1,21 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { loadCaptchaEnginge, LoadCanvasTemplate, validateCaptcha } from 'react-simple-captcha';
 import loginIMG from '../../assets/others/authentication2.png'
 import bgfrom from '../../assets/others/authentication.png'
-import { AuthContext } from '../../providers/AuthProvider';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Swal from 'sweetalert2';
+import useAuth from '../../hooks/useAuth';
+import useAxiosPublic from '../../hooks/useAxiosPublic';
 
 const Login = () => {
     const [disabled, setDisabled] = useState(true)
+    const { signIn, googleSignIn } = useAuth()
+    const axiosPublic = useAxiosPublic();
+    const navigate = useNavigate();
+    const location = useLocation();
 
-    const { signIn } = useContext(AuthContext)
+    const from = location.state?.from?.pathname || "/"
 
     useEffect(() => {
         loadCaptchaEnginge(6);
@@ -36,12 +41,37 @@ const Login = () => {
                         popup: ` animate__animated animate__fadeOutDown animate__faster `
                     }
                 });
+                navigate(from, { replace: true });
             })
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 console.log(errorCode, errorMessage);
             });
+    }
+
+    const handleGoogleSignIn = () => {
+        googleSignIn()
+            .then(result => {
+                const userInfo = {
+                    email: result.user?.email,
+                    name: result.user?.displayName
+                }
+                axiosPublic.post('/users', userInfo)
+                    .then(res => {
+                        if (res.data.insertedId) {
+                            console.log('user added to the database', res.data);
+                            Swal.fire({
+                                title: "Good job!",
+                                text: "User Profile Successfully Updated",
+                                icon: "success"
+                            });
+                            navigate(from, { replace: true });
+                        }
+
+                    })
+                    .catch(err => console.log(err.message))
+            })
     }
 
     const handleValidateCaptcha = (e) => {
@@ -113,7 +143,7 @@ const Login = () => {
                                         <path d="M36.3425 16.7358H35V16.6667H20V23.3333H29.4192C28.7592 25.1975 27.56 26.805 26.0133 27.9758C26.0142 27.975 26.015 27.975 26.0158 27.9742L31.1742 32.3392C30.8092 32.6708 36.6667 28.3333 36.6667 20C36.6667 18.8825 36.5517 17.7917 36.3425 16.7358Z" fill="#1976D2" />
                                     </svg>
 
-                                    <span className="mx-2">Sign in with Google</span>
+                                    <span onClick={() => handleGoogleSignIn()} className="mx-2">Sign in with Google</span>
                                 </a>
 
                                 <div className="mt-6 text-center ">

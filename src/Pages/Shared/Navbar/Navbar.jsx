@@ -3,11 +3,14 @@ import logo from '../../../assets/logo.png';
 import { NavLink } from 'react-router-dom';
 import { AuthContext } from '../../../providers/AuthProvider';
 import { CgLogOut } from "react-icons/cg";
+import { BsCart3 } from "react-icons/bs";
 import avater from '../../../assets/avater.png';
+import useCart from '../../../hooks/useCart';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logOut } = useContext(AuthContext);
+  const [cart] = useCart();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -15,18 +18,18 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logOut()
-      .then(res => console.log("logout successfull"))
+      .then(res => console.log("logout successfully"))
       .catch(err => console.log(err))
   }
 
   return (
-    <nav className="lg:fixed relative bg-opacity-30 bg-gray-800 shadow z-10 max-w-screen-2xl">
+    <nav className="lg:fixed relative bg-opacity-30 bg-gray-800 shadow z-10 lg:max-w-screen-2xl">
       <div className="px-6 py-6 mx-auto">
         <div className="lg:flex lg:items-center lg:justify-between">
           <div className="flex items-center justify-between  lg:flex-grow ">
             <a href="/">
               <img
-                className="w-20 h-full sm:h-7 object-cover lg:mr-[711px]"
+                className="w-20 h-full sm:h-7 object-cover lg:mr-[730px]"
                 src={logo}
                 alt=""
               />
@@ -82,42 +85,57 @@ const Navbar = () => {
               : 'opacity-0 -translate-x-full'
               }`}
           >
-            <div className="flex flex-col -mx-6 lg:flex-row lg:items-center lg:mx-24 lg:w-3/5">
+            <div className="flex flex-col -mx-6 lg:flex-row lg:items-center lg:ml-24 lg:mr-5 lg:w-3/5">
               <NavLink
                 to="/"
-                className="px-3 py-2 mx-3 mt-2 text-lg text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="px-3 py-2 mx-2 mt-2 text-base text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 Home
               </NavLink>
               <NavLink
                 to="/menu"
-                className="px-3 py-2 mx-3 mt-2 text-lg text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="px-3 py-2 mx-2 mt-2 text-base text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 Menu
               </NavLink>
               <NavLink
                 to="/order/salad"
-                className="px-3 py-2 mx-3 mt-2 text-lg text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="px-3 py-2 mx-2 mt-2 text-base text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 Order
               </NavLink>
+              {
+                user ? "" : <NavLink
+                  to="login"
+                  className="px-3 py-2 mx-2 mt-2 text-base text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  Login
+                </NavLink>
+              }
+
               <NavLink
-                to="login"
-                className="px-3 py-2 mx-3 mt-2 text-lg text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                to="/secret"
+                className="px-3 py-2 mx-2 mt-2 text-base text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
-                Login
+                Secret
               </NavLink>
+
               <NavLink
-                to="signup"
-                className="px-3 py-2 mx-3 mt-2 text-lg text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                to="/dashboard/cart"
+                className="mx-0 mt-2 text-base text-white rounded-md lg:mt-0 w-24"
               >
-                SignUp
+                <button className="btn btn-outline btn-info flex justify-center items-center">
+                  <BsCart3 className='text-xl'/>
+                  <div className="badge-xm badge-warning text-xs p-1 rounded-full">+{cart.length}</div>
+
+                </button>
               </NavLink>
 
 
             </div>
 
             <div className="flex items-center mt-4 lg:mt-0">
+
               {
                 user ? <button
                   onClick={handleLogout}
@@ -136,13 +154,18 @@ const Navbar = () => {
                 className="flex items-center focus:outline-none"
                 aria-label="toggle profile dropdown"
               >
-                <div className="w-10 h-10 overflow-hidden border-2 border-gray-400 rounded-full">
-                  <img
-                    src={user ? user?.photoURL : avater}
-                    className="object-cover w-9 h-9"
-                    alt="avatar"
-                  />
-                </div>
+                {
+                  user && <div className='flex justify-center items-center gap-2 border-2 px-4 py-1 rounded-3xl bg-gray-600'>
+                    <span className='text-sm font-semibold text-gray-100'>{user?.displayName}</span>
+                    <div className="w-10 h-10 overflow-hidden border-2 border-gray-400 rounded-full">
+                      <img
+                        src={user?.photoURL || avater}
+                        className="object-cover w-9 h-9"
+                        alt="avatar"
+                      />
+                    </div>
+                  </div>
+                }
 
                 <h3 className="mx-2 text-gray-700 dark:text-gray-200 lg:hidden">
                   {user?.displayName}

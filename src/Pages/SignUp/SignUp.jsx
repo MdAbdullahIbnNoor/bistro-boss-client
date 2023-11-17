@@ -1,15 +1,20 @@
-import React, { useContext, useState } from 'react'
+import React from 'react'
 import loginIMG from '../../assets/others/authentication2.png'
-import bgForm from '../../assets/others/authentication.png'
-import { AuthContext } from '../../providers/AuthProvider';
-import { Link } from 'react-router-dom';
+import bgForm from '../../assets/others/authentication.png';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form"
 import { BsPersonVideo2 } from "react-icons/bs";
+import { MdAddPhotoAlternate } from "react-icons/md";
 import { Helmet } from 'react-helmet-async';
+import Swal from 'sweetalert2'
+import useAxiosPublic from '../../hooks/useAxiosPublic';
+import useAuth from '../../hooks/useAuth';
+
 
 
 const SignUp = () => {
-    const { createUser, googleSignIn } = useContext(AuthContext)
+    const axiosPublic = useAxiosPublic();
+    const { createUser, googleSignIn, updateUserProfile } = useAuth();
     const {
         register,
         reset,
@@ -17,17 +22,42 @@ const SignUp = () => {
         formState: { errors },
     } = useForm()
 
+    const navigate = useNavigate();
+
     // const onSubmit = (data) => console.log(data)
     // console.log(watch("name"))
 
     const onSubmit = (data) => {
 
-        console.log(data.email, data.password);
+        // console.log(data.email, data.password);
 
         createUser(data.email, data.password)
             .then((result) => {
                 const user = result.user;
-                console.log(user);
+                // console.log(user);
+                updateUserProfile(data.name, data.photoURL)
+                    .then((result) => {
+                        // create user entry in the data base
+                        const userInfo = {
+                            name: data.name,
+                            email: data.email
+                        }
+                        axiosPublic.post('/users', userInfo)
+                            .then(res => {
+                                if (res.data.insertedId) {
+                                    console.log('user added to the database', res.data);
+                                    reset();
+                                    Swal.fire({
+                                        title: "Good job!",
+                                        text: "User Profile Successfully Updated",
+                                        icon: "success"
+                                    });
+                                    navigate("/");
+                                }
+                            })
+
+                    })
+                    .catch(err => console.log(err))
             })
             .catch((error) => {
                 console.log(error);
@@ -36,12 +66,28 @@ const SignUp = () => {
 
     const handleGoogleSignUp = () => {
         googleSignIn()
-        .then( result => {
-            console.log(result.user);
-        })
-        .catch((error) => {
-            console.log(error.message);
-        })
+            .then(result => {
+                const userInfo = {
+                    email: result.user?.email,
+                    name: result.user?.displayName
+                }
+                axiosPublic.post('/users', userInfo)
+                    .then(res => {
+                        if (res.data.insertedId) {
+                            console.log('user added to the database', res.data);
+                            reset();
+                            Swal.fire({
+                                title: "Good job!",
+                                text: "User Profile Successfully Updated",
+                                icon: "success"
+                            });
+                            navigate("/");
+                        }
+                    })
+            })
+            .catch((error) => {
+                console.log(error.message);
+            })
     }
 
     return (
@@ -73,6 +119,16 @@ const SignUp = () => {
 
                             <div className="relative flex items-center mt-4">
                                 <span className="absolute">
+                                    <MdAddPhotoAlternate className="w-5 h-5 mx-3 text-gray-300" />
+                                </span>
+
+                                <input type="text" {...register("photoURL", { required: true })} name='photoURL' className="static block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="Paste url here" />
+
+                            </div>
+                            {errors.photoURL && <span className='text-red-600'>Photo URL is required</span>}
+
+                            <div className="relative flex items-center mt-4">
+                                <span className="absolute">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 mx-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                     </svg>
@@ -90,13 +146,13 @@ const SignUp = () => {
                                     </svg>
                                 </span>
 
-                                <input type="password" {...register("password", 
-                                { 
-                                    required: true, 
-                                    minLength: 6, 
-                                    maxLength: 20,
-                                    pattern: /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,20}$/
-                                }
+                                <input type="password" {...register("password",
+                                    {
+                                        required: true,
+                                        minLength: 6,
+                                        maxLength: 20,
+                                        pattern: /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,20}$/
+                                    }
                                 )} name='password' className="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40" placeholder="Password" />
 
                             </div>
@@ -111,7 +167,7 @@ const SignUp = () => {
                                 </button>
                                 <p className="mt-4 text-center text-gray-600">or sign up with</p>
 
-                                <a href="#" className="flex items-center justify-center px-6 py-3 mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg hover:bg-gray-50">
+                                <a href="#" className="flex items-center justify-center px-6 py-3 mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg hover:bg-amber-500">
                                     <svg className="w-6 h-6 mx-2" viewBox="0 0 40 40">
                                         <path d="M36.3425 16.7358H35V16.6667H20V23.3333H29.4192C28.045 27.2142 24.3525 30 20 30C14.4775 30 10 25.5225 10 20C10 14.4775 14.4775 9.99999 20 9.99999C22.5492 9.99999 24.8683 10.9617 26.6342 12.5325L31.3483 7.81833C28.3717 5.04416 24.39 3.33333 20 3.33333C10.7958 3.33333 3.33335 10.7958 3.33335 20C3.33335 29.2042 10.7958 36.6667 20 36.6667C29.2042 36.6667 36.6667 29.2042 36.6667 20C36.6667 18.8825 36.5517 17.7917 36.3425 16.7358Z" fill="#FFC107" />
                                         <path d="M5.25497 12.2425L10.7308 16.2583C12.2125 12.59 15.8008 9.99999 20 9.99999C22.5491 9.99999 24.8683 10.9617 26.6341 12.5325L31.3483 7.81833C28.3716 5.04416 24.39 3.33333 20 3.33333C13.5983 3.33333 8.04663 6.94749 5.25497 12.2425Z" fill="#FF3D00" />
