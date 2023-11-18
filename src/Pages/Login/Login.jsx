@@ -66,7 +66,7 @@ const Login = () => {
                                 text: "User Profile Successfully Updated",
                                 icon: "success"
                             });
-                            navigate(from, { replace: true });
+                            navigate('/');
                         }
 
                     })

@@ -4,12 +4,13 @@ import { BsCart3 } from "react-icons/bs";
 import { FaAd, FaBook, FaCalendar, FaEnvelope, FaHome, FaList, FaSearch, FaUsers } from "react-icons/fa";
 import { ImSpoonKnife } from "react-icons/im";
 import useCart from '../hooks/useCart';
+import useAdmin from '../hooks/useAdmin';
 
 const Dashboard = () => {
     const [cart] = useCart();
 
     // TODO: get isAdmin from the database
-    const isAdmin = true;
+    const [isAdmin] = useAdmin();
     return (
         <div className='flex py-16 '>
             <div className="w-64 min-h-[850px] bg-amber-500">

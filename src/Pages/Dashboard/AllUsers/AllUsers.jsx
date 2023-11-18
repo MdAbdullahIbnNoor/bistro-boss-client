@@ -2,19 +2,39 @@ import { useQuery } from '@tanstack/react-query'
 import React from 'react'
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import { AiTwotoneDelete } from "react-icons/ai";
-import { BiEdit } from "react-icons/bi";
+import { FaUsers } from "react-icons/fa6";
+import Swal from 'sweetalert2';
 
 const AllUsers = () => {
     const axiosSecure = useAxiosSecure();
-    const { data: users = [] } = useQuery({
+    const { data: users = [], refetch } = useQuery({
         queryKey: ['users'],
         queryFn: async () => {
             const res = await axiosSecure.get('/users');
+            // console.log(res.data);
             return res.data;
         }
     })
 
-    const handleDeleteUser = id => {
+    const handleMakeAdmin = user => {
+        console.log(user);
+        axiosSecure.patch(`/users/admin/${user._id}`)
+            .then(res => {
+                console.log(res.data)
+                if (res.data.modifiedCount > 0) {
+                    refetch();
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: `${user.name} is an Admin Now!`,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            })
+    }
+
+    const handleDeleteUser = user => {
         Swal.fire({
             title: "Are you sure?",
             text: "You won't be able to revert this!",
@@ -25,7 +45,7 @@ const AllUsers = () => {
             confirmButtonText: "Yes, delete it!"
         }).then((result) => {
             if (result.isConfirmed) {
-                axiosSecure.delete(`/users/${id}`)
+                axiosSecure.delete(`/users/${user._id}`)
                     .then(res => {
                         if (res.data.deletedCount > 0) {
                             refetch();
@@ -48,7 +68,7 @@ const AllUsers = () => {
                 <h1 className='text-3xl font-bold'>Total Users: {users.length}</h1>
             </div>
 
-            <div className="overflow-x-auto lg:w-3/5 mx-auto">
+            <div className="overflow-x-auto lg:w-4/5 mx-auto">
                 <table className="table">
                     {/* head */}
                     <thead className=''>
@@ -57,30 +77,32 @@ const AllUsers = () => {
                             <th className='uppercase text-white py-4'>User Name</th>
                             <th className='uppercase text-white py-4'>User Email</th>
                             {/* <th className='uppercase text-white py-4'>Item Price</th> */}
-                            <th className='uppercase text-white py-4'>Action</th>
+                            <th className='uppercase text-white py-4'>Role</th>
                             <th className='uppercase text-white py-4'>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {
-                            users.map((user, index) => <tr key={user.menuId}>
+                            users.map((user, index) => <tr key={user._id}>
                                 <td>{index + 1}</td>
                                 <td>
                                     <div>
-                                        <div className="font-bold text-base lg:text-lg">{user.name}</div>
+                                        <div className="font-semibold text-base">{user.name}</div>
                                     </div>
                                 </td>
                                 <td>
                                     <div>
-                                        <div className="font-bold text-base lg:text-lg">{user.email}</div>
+                                        <div className="font-semibold text-base">{user.email}</div>
                                     </div>
                                 </td>
                                 {/* <td className='text-lg font-semibold text-amber-700'>${user.price}</td> */}
                                 <th>
-                                    <button className="btn bg-amber-700 btn-square text-white text-2xl"><BiEdit /></button>
+                                    {
+                                        user.role === 'admin' ? 'Admin' : <button onClick={() => handleMakeAdmin(user)} className="btn bg-amber-700 btn-square text-white text-2xl"><FaUsers /></button>
+                                    }
                                 </th>
                                 <th>
-                                    <button onClick={() => handleDeleteUser(user._id)} className="btn bg-red-600 btn-square text-white text-2xl"><AiTwotoneDelete /></button>
+                                    <button onClick={() => handleDeleteUser(user)} className="btn bg-red-600 btn-square text-white text-2xl"><AiTwotoneDelete /></button>
                                 </th>
                             </tr>
                             )
