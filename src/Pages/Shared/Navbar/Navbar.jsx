@@ -1,15 +1,17 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import logo from '../../../assets/logo.png';
 import { NavLink } from 'react-router-dom';
-import { AuthContext } from '../../../providers/AuthProvider';
 import { CgLogOut } from "react-icons/cg";
 import { BsCart3 } from "react-icons/bs";
 import avater from '../../../assets/avater.png';
 import useCart from '../../../hooks/useCart';
+import useAuth from '../../../hooks/useAuth';
+import useAdmin from '../../../hooks/useAdmin';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, logOut } = useContext(AuthContext);
+  const { user, logOut } = useAuth();
+  const [isAdmin] = useAdmin()
   const [cart] = useCart();
 
   const toggleMenu = () => {
@@ -23,13 +25,13 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="lg:fixed relative bg-opacity-30 bg-gray-800 shadow z-10 lg:max-w-screen-2xl">
-      <div className="px-6 py-6 mx-auto">
+    <nav className="lg:fixed relative bg-opacity-30 bg-gray-800 shadow z-10 w-full lg:max-w-screen-2xl">
+      <div className="px-6 py-4 mx-auto">
         <div className="lg:flex lg:items-center lg:justify-between">
           <div className="flex items-center justify-between  lg:flex-grow ">
             <a href="/">
               <img
-                className="w-20 h-full sm:h-7 object-cover lg:mr-[730px]"
+                className="w-20 lg:w-36 h-full sm:h-7 object-cover"
                 src={logo}
                 alt=""
               />
@@ -88,44 +90,53 @@ const Navbar = () => {
             <div className="flex flex-col -mx-6 lg:flex-row lg:items-center lg:ml-24 lg:mr-5 lg:w-3/5">
               <NavLink
                 to="/"
-                className="px-3 py-2 mx-2 mt-2 text-base text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="px-3 py-2 mx-2 text-base text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 Home
               </NavLink>
               <NavLink
                 to="/menu"
-                className="px-3 py-2 mx-2 mt-2 text-base text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="px-3 py-2 mx-2 text-base text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 Menu
               </NavLink>
               <NavLink
                 to="/order/salad"
-                className="px-3 py-2 mx-2 mt-2 text-base text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="px-3 py-2 mx-2 text-base text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 Order
               </NavLink>
               {
+                user && isAdmin && <NavLink
+                  to="/dashboard/adminHome"
+                  className="px-3 py-2 mx-2 text-base text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                  Dashboard
+                </NavLink>
+              }
+              {
+                user && !isAdmin && <NavLink
+                  to="/dashboard/userHome"
+                  className="px-3 py-2 mx-2 text-base text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                  Dashboard
+                </NavLink>
+              }
+              {
                 user ? "" : <NavLink
                   to="login"
-                  className="px-3 py-2 mx-2 mt-2 text-base text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  className="px-3 py-2 mx-2 text-base text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   Login
                 </NavLink>
               }
 
               <NavLink
-                to="/secret"
-                className="px-3 py-2 mx-2 mt-2 text-base text-gray-700 transition-colors duration-300 transform rounded-md lg:mt-0 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                Secret
-              </NavLink>
-
-              <NavLink
                 to="/dashboard/cart"
-                className="mx-0 mt-2 text-base text-white rounded-md lg:mt-0 w-24"
+                className="mx-0 text-base text-white rounded-md lg:mt-0 w-24"
               >
-                <button className="btn btn-outline btn-info flex justify-center items-center">
-                  <BsCart3 className='text-xl'/>
+                <button className="btn btn-outline btn-info flex justify-center items-center w-24">
+                  <BsCart3 className='text-xl' />
                   <div className="badge-xm badge-warning text-xs p-1 rounded-full">+{cart.length}</div>
 
                 </button>

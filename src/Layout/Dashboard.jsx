@@ -13,7 +13,7 @@ const Dashboard = () => {
     const [isAdmin] = useAdmin();
     return (
         <div className='flex py-16 '>
-            <div className="w-64 min-h-[850px] bg-amber-500">
+            <div className="w-72 min-h-[850px] bg-amber-500">
                 {/* side bar */}
                 <ul className='menu '>
                     {
@@ -40,7 +40,7 @@ const Dashboard = () => {
                                     <NavLink to='/dashboard/userHome'><FaHome /> User Home</NavLink>
                                 </li>
                                 <li className='px-3 py-2 text-lg font-medium'>
-                                    <NavLink to='/dashboard/reservation'><FaCalendar />Reservation</NavLink>
+                                    <NavLink to='/dashboard/history'><FaCalendar />History</NavLink>
                                 </li>
                                 <li className='px-3 py-2 text-lg font-medium'>
                                     <NavLink to='/dashboard/cart'><BsCart3 /> My Cart({cart.length})</NavLink>
@@ -49,7 +49,7 @@ const Dashboard = () => {
                                     <NavLink to='/dashboard/review'><FaAd /> Add a Review</NavLink>
                                 </li>
                                 <li className='px-3 py-2 text-lg font-medium'>
-                                    <NavLink to='/dashboard/bookings'><FaList /> My Bookings</NavLink>
+                                    <NavLink to='/dashboard/paymentHistory'><FaList /> Real Payment History</NavLink>
                                 </li>
                             </>
                     }

@@ -81,8 +81,8 @@ const SignUp = () => {
                                 text: "User Profile Successfully Updated",
                                 icon: "success"
                             });
-                            navigate("/");
                         }
+                        navigate("/");
                     })
             })
             .catch((error) => {

@@ -66,9 +66,8 @@ const Login = () => {
                                 text: "User Profile Successfully Updated",
                                 icon: "success"
                             });
-                            navigate('/');
                         }
-
+                        navigate('/');
                     })
                     .catch(err => console.log(err.message))
             })
