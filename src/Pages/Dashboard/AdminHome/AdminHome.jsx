@@ -19,7 +19,7 @@ const AdminHome = () => {
     return (
         <div>
             <h2 className='text-3xl font-medium mb-10'>
-                <span>Hi, Welcome {user?.displayName || 'Back'}</span>
+                <span>Hi, Welcome { <span className='text-blue-600 font-bold'> {user?.displayName} </span> || 'Back'}</span>
             </h2>
             <div className="grid lg:grid-cols-4 gap-6">
                 {/* 1. Revenues Generated */}
