@@ -56,13 +56,20 @@ const AdminHome = () => {
         );
     };
 
-    const pieChartData = chartData.map(data => {
-        return { name: data.category, value: data.revenue }
-    })
+    const pieChartData = chartData ? chartData.map(data => ({ name: data.category, value: data.revenue })) : [];
+
 
     if (isLoading || loadingMamma) {
         return (
             <span className="loading loading-dots loading-xl w-24 mx-auto"></span>
+        );
+    }
+
+    if (stats === undefined || chartData === undefined) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <p className="text-red-600">Error loading data. Please try again later.</p>
+            </div>
         );
     }
 
